@@ -7,11 +7,12 @@ export function addSection(type){
   console.log('editor.addSection', type);
   ph();
   const page = state.pages[state.pages.length-1];
-  const sec = { id: ('id_'+Math.random().toString(36).slice(2,9)), type, data: {} };
+  const sec = { id: ('id_'+Math.random().toString(36).slice(2,9)), type, data: {}, collapsed: true };
   if(type==='skills') sec.data.items = ['Skill A','Skill B'];
   if(type==='experience') sec.data.items = [{company:'Company',role:'Role',from:'',to:'',summary:''}];
   if(type==='education') sec.data.items = [{school:'School',degree:'Degree',year:''}];
   if(type==='header') sec.data = { name:'Your Name', title:'Your Title', email:'you@example.com', photo: null };
+  if(type==='header') sec.data = { name:'Your Name', title:'Your Title', email:'you@example.com', photo: null, location:'Your City', phone:'', linkedin:'' };
   if(type==='objectives') sec.data = { text: 'A short objective or summary statement' };
   if(type==='hobbies') sec.data = { text: 'Hobbies...' };
   // assign a layer color for the preview layer
@@ -44,6 +45,7 @@ export function addPage(){ ph(); state.pages.push({ sections: [] }); save(); ren
 export function removePage(index){ ph(); state.pages.splice(index,1); if(state.pages.length===0) state.pages.push({ sections: [] }); save(); renderPreview(); }
 
 export function removeSection(pIndex, sIndex){ ph(); state.pages[pIndex].sections.splice(sIndex,1); save(); renderPreview(); }
+export function removeSectionAndRefresh(pIndex, sIndex){ ph(); state.pages[pIndex].sections.splice(sIndex,1); save(); renderForms(); renderPreview(); }
 
 export function moveSection(pIndex, sIndex, dir){ ph(); const arr = state.pages[pIndex].sections; const to = sIndex + dir; if(to<0 || to>=arr.length) return; const [item] = arr.splice(sIndex,1); arr.splice(to,0,item); save(); renderPreview(); }
 
@@ -54,6 +56,7 @@ export function moveToNextPage(pIndex, sIndex){ ph(); const next = pIndex+1; if(
 export function renderForms(){
   const container = els.forms();
   container.innerHTML = '';
+    function stripHtml(s){ if(!s) return ''; const tmp=document.createElement('div'); tmp.innerHTML = s; return tmp.textContent || tmp.innerText || ''; }
   state.pages.forEach((page, pIndex)=>{
     const pageWrap = document.createElement('div'); pageWrap.className = 'page-editor';
     const headerRow = document.createElement('div'); headerRow.style.display='flex'; headerRow.style.justifyContent='space-between'; headerRow.style.alignItems='center'; headerRow.style.marginBottom='8px';
@@ -63,18 +66,28 @@ export function renderForms(){
 
     page.sections.forEach((section, sIndex)=>{
       const s = document.createElement('section'); s.className = 'editor-section'; s.dataset.p = pIndex; s.dataset.s = sIndex;
-      const handle = document.createElement('div'); handle.className='drag-handle'; handle.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6h4v2h-4zM10 11h4v2h-4zM10 16h4v2h-4z"/></svg>';
-      s.appendChild(handle);
+      // collapsed state persisted on the section object
+      if(section.collapsed) s.classList.add('collapsed');
 
-      const h = document.createElement('div'); h.style.display='flex'; h.style.justifyContent='space-between'; h.style.alignItems='center';
-      const label = document.createElement('div'); label.className = 'editor-section-title'; label.textContent = `${section.type.toUpperCase()} (${sIndex+1})`; h.appendChild(label);
+      const h = document.createElement('div'); h.className = 'editor-section-header'; h.style.display='flex'; h.style.justifyContent='space-between'; h.style.alignItems='center';
+      const label = document.createElement('div'); label.className = 'editor-section-title'; label.textContent = `${section.type.toUpperCase()} (${sIndex+1})`;
+      // toggle button for collapse/expand
+      const toggle = document.createElement('button'); toggle.className = 'shelf-toggle'; toggle.innerHTML = section.collapsed ? '▶' : '▼'; toggle.setAttribute('aria-expanded', section.collapsed ? 'false' : 'true'); toggle.title = section.collapsed ? 'Expand' : 'Collapse'; toggle.style.marginRight = '8px';
+      toggle.addEventListener('click', ()=>{
+        const isCollapsed = s.classList.contains('collapsed');
+        if(isCollapsed){
+          s.classList.remove('collapsed'); toggle.innerHTML='▼'; toggle.title='Collapse'; toggle.setAttribute('aria-expanded','true'); section.collapsed = false;
+        } else {
+          s.classList.add('collapsed'); toggle.innerHTML='▶'; toggle.title='Expand'; toggle.setAttribute('aria-expanded','false'); section.collapsed = true;
+        }
+        save();
+      });
+      const leftWrap = document.createElement('div'); leftWrap.className = 'left-wrap'; leftWrap.style.display = 'flex'; leftWrap.style.alignItems = 'center'; leftWrap.appendChild(toggle); leftWrap.appendChild(label);
+      h.appendChild(leftWrap);
       const controls = document.createElement('div'); controls.className='editor-controls';
-
-      const up = document.createElement('button'); up.textContent='↑'; up.title='Move up'; up.onclick = ()=>{ moveSection(pIndex, sIndex, -1) };
-      const down = document.createElement('button'); down.textContent='↓'; down.title='Move down'; down.onclick = ()=>{ moveSection(pIndex, sIndex, 1) };
-      const nextPage = document.createElement('button'); nextPage.textContent='⇢'; nextPage.title='Move to next page'; nextPage.onclick = ()=>{ moveToNextPage(pIndex, sIndex) };
-      const remove = document.createElement('button'); remove.textContent='Remove'; remove.title='Remove section'; remove.onclick = ()=>{ removeSection(pIndex, sIndex) };
-      controls.appendChild(up); controls.appendChild(down); controls.appendChild(nextPage); controls.appendChild(remove); h.appendChild(controls);
+      // streamlined controls: only keep remove (dragging handled in preview)
+      const remove = document.createElement('button'); remove.innerHTML='✕'; remove.title='Remove section'; remove.onclick = ()=>{ removeSectionAndRefresh(pIndex, sIndex) };
+      controls.appendChild(remove); h.appendChild(controls);
       s.appendChild(h);
 
       // simple fields
@@ -83,18 +96,21 @@ export function renderForms(){
         const img = document.createElement('img'); img.className='photo-preview'; if(section.data.photo) img.src = section.data.photo;
         const file = document.createElement('input'); file.type='file'; file.accept='image/*'; file.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev=>{ section.data.photo = ev.target.result; save(); renderForms(); renderPreview(); }; r.readAsDataURL(f); };
         photoRow.appendChild(img); photoRow.appendChild(file); s.appendChild(photoRow);
-        s.appendChild(inputField('Name', section.data.name, v=>{ section.data.name = v; save(); renderPreview(); }));
-        s.appendChild(inputField('Title', section.data.title, v=>{ section.data.title = v; save(); renderPreview(); }));
-        s.appendChild(inputField('Email', section.data.email, v=>{ section.data.email = v; save(); renderPreview(); }));
+          s.appendChild(inputField('Name', stripHtml(section.data.name), v=>{ section.data.name = v; save(); renderPreview(); }));
+          s.appendChild(inputField('Title', stripHtml(section.data.title), v=>{ section.data.title = v; save(); renderPreview(); }));
+          s.appendChild(inputField('Location', stripHtml(section.data.location || ''), v=>{ section.data.location = v; save(); renderPreview(); }));
+          s.appendChild(inputField('Phone', stripHtml(section.data.phone || ''), v=>{ section.data.phone = v; save(); renderPreview(); }));
+          s.appendChild(inputField('Email', stripHtml(section.data.email), v=>{ section.data.email = v; save(); renderPreview(); }));
+          s.appendChild(inputField('Linkedin URL', stripHtml(section.data.linkedin || ''), v=>{ section.data.linkedin = v; save(); renderForms(); renderPreview(); }));
       } else if(section.type === 'experience'){
         section.data.items = section.data.items || [];
         section.data.items.forEach((it,i)=>{
           const wrap = document.createElement('div'); wrap.style.paddingTop='8px';
-          wrap.appendChild(inputField('Company', it.company, v=>{ it.company=v; save(); renderPreview() }));
-          wrap.appendChild(inputField('Role', it.role, v=>{ it.role=v; save(); renderPreview() }));
-          wrap.appendChild(inputField('From', it.from, v=>{ it.from=v; save(); renderPreview() }));
-          wrap.appendChild(inputField('To', it.to, v=>{ it.to=v; save(); renderPreview() }));
-          wrap.appendChild(textareaField('Summary', it.summary, v=>{ it.summary=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('Company', stripHtml(it.company), v=>{ it.company=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('Role', stripHtml(it.role), v=>{ it.role=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('From', stripHtml(it.from), v=>{ it.from=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('To', stripHtml(it.to), v=>{ it.to=v; save(); renderPreview() }));
+          wrap.appendChild(textareaField('Summary', stripHtml(it.summary), v=>{ it.summary=v; save(); renderPreview() }));
           s.appendChild(wrap);
         })
         const addExp = document.createElement('button'); addExp.textContent='Add Experience Item'; addExp.onclick=()=>{ section.data.items.push({company:'Company',role:'Role',from:'',to:'',summary:''}); save(); renderForms(); renderPreview(); };
@@ -105,9 +121,9 @@ export function renderForms(){
         section.data.items = section.data.items || [];
         section.data.items.forEach((it,i)=>{
           const wrap = document.createElement('div'); wrap.style.paddingTop='6px';
-          wrap.appendChild(inputField('School', it.school, v=>{ it.school=v; save(); renderPreview() }));
-          wrap.appendChild(inputField('Degree', it.degree, v=>{ it.degree=v; save(); renderPreview() }));
-          wrap.appendChild(inputField('Year', it.year, v=>{ it.year=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('School', stripHtml(it.school), v=>{ it.school=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('Degree', stripHtml(it.degree), v=>{ it.degree=v; save(); renderPreview() }));
+          wrap.appendChild(inputField('Year', stripHtml(it.year), v=>{ it.year=v; save(); renderPreview() }));
           s.appendChild(wrap);
         })
         const addEd = document.createElement('button'); addEd.textContent='Add Education Item'; addEd.onclick=()=>{ section.data.items.push({school:'School',degree:'Degree',year:''}); save(); renderForms(); renderPreview(); };
@@ -129,14 +145,5 @@ export function renderForms(){
 
 // expose helpers for wire-up drag events (lightweight)
 export function attachDragHandlers(){
-  document.addEventListener('dragstart', (e)=>{
-    const s = e.target.closest('.editor-section'); if(!s) return;
-    const p = Number(s.dataset.p); const si = Number(s.dataset.s);
-    e.dataTransfer.setData('text/plain', JSON.stringify({ fromP: p, fromS: si }));
-  });
-  // drop handlers on page editor
-  document.addEventListener('dragover', (e)=>{ if(e.target.closest('.page-editor')) e.preventDefault(); });
-  document.addEventListener('drop', (e)=>{
-    const pageWrap = e.target.closest('.page-editor'); if(!pageWrap) return; e.preventDefault(); try{ const payload = JSON.parse(e.dataTransfer.getData('text/plain')); const pageIndex = Array.from(document.querySelectorAll('.page-editor')).indexOf(pageWrap); moveSectionBetweenPages(payload.fromP, payload.fromS, pageIndex, state.pages[pageIndex].sections.length); }catch(_){ }
-  });
+  // No-op: panel drag handlers disabled (dragging is performed in preview)
 }

@@ -6,20 +6,41 @@
   <title>Jobest — Resume Builder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;600&family=Merriweather:wght@300;400;700&family=Lora:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="site-brand"><span class="brand-accent">Job</span>est</div>
+      <div class="header-right">
+        <nav class="site-nav">
+        </nav>
+        <div class="header-actions">
+          <div class="primary-actions">
+            <button id="export-json" aria-label="Export JSON">Export</button>
+            <button id="import-json" aria-label="Import JSON">Import</button>
+            <button id="export-pdf" aria-label="Save as PDF">Save PDF</button>
+          </div>
+          <div class="secondary-actions">
+            <button id="undo" aria-label="Undo">Undo</button>
+            <button id="redo" aria-label="Redo">Redo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
   <div class="app">
     <aside class="panel-left">
       <div class="editor-header">
-        <h1>Construction</h1>
-        <div style="font-size:12px;color:var(--muted)">Draft</div>
+        <div class="header-left" style="display:flex;align-items:center;gap:12px">
+          <h1>Editor</h1>
+        </div>
       </div>
 
       <div class="templates">
-        <div class="row">
-          <button id="add-header" aria-label="Add Header">Add Header</button>
+          <div class="row">
+          <button id="add-header" aria-label="Add Candidate">Add Candidate</button>
           <button id="add-experience" aria-label="Add Experience">Add Experience</button>
         </div>
         <div class="row">
@@ -35,27 +56,36 @@
         </div>
       </div>
 
-      <div class="io">
-        <button id="export-json" aria-label="Export JSON"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zM12 3l4 4h-3v4h-2V7H8l4-4z"/></svg>Export</button>
-        <button id="import-json" aria-label="Import JSON"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9v10H5V9H3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9h-2zM11 11V3h2v8h3l-4 4-4-4h3z"/></svg>Import</button>
-        <button id="print" aria-label="Print / Export to PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8H5c-1.1 0-2 .9-2 2v6h4v4h10v-4h4v-6c0-1.1-.9-2-2-2zM8 18H6v-4h12v4h-2v2H8v-2zM17 3H7v4h10V3z"/></svg>Print</button>
-        <button id="export-pdf" aria-label="Save as PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM13 3v6h6l-6-6zM12 12l4 4h-3v4h-2v-4H8l4-4z"/></svg>Save PDF</button>
-        <button id="undo" aria-label="Undo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6 0 1.42-.47 2.73-1.26 3.78l1.46 1.46C20.14 17.14 21 15.14 21 13c0-4.97-4.03-9-9-9z"/></svg>Undo</button>
-        <button id="redo" aria-label="Redo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6 0 1.42.47 2.73 1.26 3.78L6.8 20.24C5.86 18.86 5 16.86 5 14c0-4.97 4.03-9 9-9z"/></svg>Redo</button>
-        <button id="remove-page-global" aria-label="Remove Last Page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Remove Page</button>
-      </div>
+      
 
       <div class="controls-extra">
         <label for="zoom-slider">Preview Zoom <span id="zoom-value">100%</span></label>
         <input id="zoom-slider" type="range" min="40" max="100" step="1" value="100" aria-label="Preview zoom" />
+        <label for="orientation-select">Orientation</label>
+        <select id="orientation-select" aria-label="Select page orientation">
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
+        </select>
         <label for="font-select">Font Family</label>
         <select id="font-select" aria-label="Select font family">
           <option value="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial">Inter (default)</option>
-          <option value="Calibri, Candara, 'Segoe UI', Arial, sans-serif">Calibri</option>
-          <option value="'Calibri Light', Calibri, Candara, 'Segoe UI', Arial, sans-serif">Calibri Light</option>
+          <option value="Roboto, system-ui, -apple-system, 'Segoe UI', Arial">Roboto</option>
+          <option value="Montserrat, 'Helvetica Neue', Arial, sans-serif">Montserrat</option>
+          <option value="Merriweather, Georgia, 'Times New Roman', serif">Merriweather</option>
+          <option value="Lora, Georgia, 'Times New Roman', serif">Lora</option>
           <option value="Arial, Helvetica, sans-serif">Arial</option>
           <option value="Times New Roman, Times, serif">Times New Roman</option>
         </select>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+          <label for="base-font-size">Base font size <span id="base-font-value">11pt</span></label>
+          <input id="base-font-size" type="range" min="8" max="20" step="0.5" value="11" />
+          <label for="title-font-size">Title font size <span id="title-font-value">48pt</span></label>
+          <input id="title-font-size" type="range" min="18" max="72" step="1" value="48" />
+          <label for="section-font-size">Section title size <span id="section-font-value">13pt</span></label>
+          <input id="section-font-size" type="range" min="8" max="28" step="0.5" value="13" />
+          <label for="selected-field-size">Selected field size <span id="selected-field-value">—</span></label>
+          <input id="selected-field-size" type="range" min="6" max="30" step="0.5" value="11" />
+        </div>
       </div>
 
       <!-- keyboard hint removed per user preference -->

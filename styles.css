@@ -9,18 +9,46 @@
   --shadow: 0 6px 18px rgba(16,24,40,0.04);
   --gap:12px;
   --font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --editbox-font-size: 11pt;
 }
 
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--bg);color:var(--text-body);font-size:11pt;line-height:1.35}
+html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--bg);color:var(--text-body);font-size:var(--base-font-size,11pt);line-height:1.35}
 
-.app{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;height:100vh}
-.panel-left{background:#FFFFFF;border:1px solid rgba(16,24,40,0.04);padding:18px;overflow:auto;box-shadow:0 12px 30px rgba(16,24,40,0.04);display:flex;flex-direction:column}
+/* fixed site header at top of landing page */
+.site-header{position:fixed;left:0;right:0;top:0;height:72px;background:#ffffff;box-shadow:0 6px 18px rgba(16,24,40,0.08);z-index:1400;display:flex;align-items:center}
+.site-header-inner{max-width:1200px;margin:0 auto;padding:8px 18px;display:flex;align-items:center;justify-content:space-between}
+.site-brand{font-weight:800;font-size:18px}
+.site-nav{display:flex;gap:12px;align-items:center}
+.site-nav .nav-item{text-decoration:none;color:var(--muted);padding:8px 10px;border-radius:6px}
+.site-nav .nav-item:hover{background:var(--surface-1);color:var(--text-strong)}
+/* header actions layout */
+.header-actions{display:flex;flex-direction:row;align-items:center;gap:8px}
+.primary-actions{display:flex;gap:8px}
+.secondary-actions{display:flex;gap:8px}
+.primary-actions button,.secondary-actions button{padding:6px 8px;border:1px solid var(--surface-2);background:#fff;cursor:pointer;border-radius:6px;font-size:13px;line-height:1}
+.primary-actions button:hover,.secondary-actions button:hover{background:var(--surface-1)}
+/* push main app content below header */
+body{padding-top:72px}
+
+/* header right grouping */
+.header-right{position:absolute;right:18px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:10px}
+
+.site-brand{font-weight:800;font-size:18px;letter-spacing:-0.02em}
+.site-brand .brand-accent{background:linear-gradient(90deg,#7c3aed,#06b6d4);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.app{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;min-height:calc(100vh - 86px)}
+.panel-left{background:#FFFFFF;border:1px solid rgba(16,24,40,0.06);padding:18px;overflow:visible;box-shadow:0 18px 48px rgba(16,24,40,0.09);display:flex;flex-direction:column}
 .panel-right{background:transparent;overflow:auto;padding:0}
 
 .editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .editor-header h1{font-size:18px;color:var(--text-strong);margin:0}
-.status-badge{font-size:12px;color:var(--muted);padding:6px 8px;border:1px solid var(--surface-2);background:#fff}
+.editor-header .logo{font-weight:800;font-size:18px;letter-spacing:-0.02em}
+.editor-header .brand-accent{background:linear-gradient(90deg,#7c3aed,#06b6d4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.header-controls .io{display:flex;gap:8px;align-items:center}
+.header-controls .io button{padding:8px 10px;border:1px solid var(--surface-2);background:#fff;cursor:pointer;font-size:12px}
+.header-controls .io button .icon{width:14px;height:14px;margin-right:6px}
+.header-left{display:flex;align-items:center;gap:10px}
 
 .templates .row{display:flex;gap:10px;margin-bottom:12px}
 .templates button{flex:1;padding:12px;border:0;background:#ffffff;color:var(--text-strong);cursor:pointer;box-shadow:inset 0 -1px 0 rgba(16,24,40,0.02),0 10px 30px rgba(16,24,40,0.04);transition:transform .12s ease,box-shadow .12s ease}
@@ -36,7 +64,10 @@ html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--b
 .btn-click{animation:btn-pop .18s ease}
 @keyframes btn-pop{0%{transform:scale(1)}50%{transform:scale(.98)}100%{transform:scale(1)}}
 
-.forms{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.forms{display:flex;flex-direction:column;gap:12px;margin-top:14px;padding-right:6px;flex:1;padding-bottom:6px}
+.page-editor{border:0;padding:8px;margin-bottom:10px;background:transparent}
+.page-editor .editor-controls{display:flex;gap:8px}
+.page-editor .page-editor-row{display:flex;flex-direction:column;gap:10px}
 .sr-only{position:relative}
 
 .preview{display:flex;flex-direction:column;gap:20px;align-items:center;padding:0}
@@ -67,9 +98,9 @@ html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--b
 /* panel left content layout */
 .panel-left .templates{margin-bottom:8px}
 .panel-left .io{margin-bottom:12px}
-.panel-left .forms{flex:1;overflow:auto;padding-right:6px}
+.panel-left .forms{flex:1;overflow:visible;padding-right:6px}
 
-.page{width:297mm;height:210mm;padding:0;box-sizing:border-box;background:#FFFFFF;border:1px solid var(--surface-2);box-shadow:0 8px 20px rgba(16,24,40,0.04)}
+.page{width:210mm;height:297mm;padding:0;box-sizing:border-box;background:#FFFFFF;border:1px solid var(--surface-2);box-shadow:0 8px 20px rgba(16,24,40,0.04)}
 .page.landscape { width:297mm; height:210mm }
 .page.grid-helper{outline:1px dashed rgba(17,24,39,0.06)}
 
@@ -109,40 +140,68 @@ html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--b
   .page .layer:not(:last-child)::after{background:none}
 }
 
-.candidate-name{font-weight:800;color:var(--text-strong);font-size:48pt;margin:0;line-height:0.95}
+.candidate-name{font-weight:800;color:var(--text-strong);font-size:var(--title-font-size,48pt);margin:0;line-height:0.95}
 .candidate-title{font-size:14pt;color:var(--muted);margin-top:6px}
 
 .section{background:transparent;border:0;padding:12px 0;margin-bottom:12px;box-shadow:none}
-.section-title{font-weight:700;color:var(--text-strong);border-bottom:0;padding-bottom:8px;margin-bottom:8px;text-align:center;font-size:13pt;position:relative}
+.section-title{font-weight:700;color:var(--text-strong);border-bottom:0;padding-bottom:8px;margin-bottom:8px;text-align:center;font-size:var(--section-title-size,13pt);position:relative}
 .section-title::after{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:0;height:1px;width:36%;border-radius:1px;background:linear-gradient(90deg, rgba(17,24,39,0) 0%, rgba(17,24,39,0.85) 50%, rgba(17,24,39,0) 100%)}
-.section-body{color:var(--text-body);font-size:11pt}
+.section-body{color:var(--text-body);font-size:var(--base-font-size,11pt)}
+
+/* default font-size for editable fields (separate from base body font size) */
+[contenteditable="true"]{font-size:var(--editbox-font-size)}
 .skill-chip{display:inline-block;background:var(--surface-2);color:var(--text-strong);padding:4px 8px;margin:4px 6px 0 0;border-radius:2px;font-size:10pt}
 
 /* Editor section */
 .editor-section{position:relative;padding-left:48px;border:1px solid transparent}
 .drag-handle{position:absolute;left:10px;top:8px;width:32px;height:32px;background:#fff;border:1px solid var(--surface-2);display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 2px 6px rgba(16,24,40,0.04)}
-.drag-controls{position:absolute;left:10px;top:46px;display:flex;flex-direction:column;gap:6px}
-.drag-controls button{width:32px;height:28px;background:#fff;border:1px solid var(--surface-2);cursor:pointer}
+.drag-controls{position:absolute;right:10px;top:46px;display:flex;flex-direction:column;gap:6px}
+.drag-controls button{width:34px;height:30px;background:#fff;border:1px solid var(--surface-2);cursor:pointer;border-radius:6px}
 
 .editor-section[draggable="true"]{cursor:move}
 .editor-section.dragging{opacity:0.5}
 .editor-section.drag-over{outline:2px dashed rgba(17,24,39,0.12)}
 
 /* Inputs */
-input, textarea, select{font-family:var(--font-family);border:1px solid var(--surface-2);padding:8px;background:#fff;color:var(--text-strong)}
-textarea{min-height:80px}
-button:focus, input:focus, textarea:focus{outline:2px solid rgba(17,24,39,0.08)}
+input, textarea, select{font-family:var(--font-family);border:1px solid var(--surface-2);padding:8px;background:#fff;color:var(--text-strong);border-radius:6px;font-size:var(--editbox-font-size)}
+textarea{min-height:84px}
+button:focus, input:focus, textarea:focus{outline:2px solid rgba(17,24,39,0.08);outline-offset:2px}
 
 /* Form editor visual polish */
 .forms .page-editor{background:transparent;border-radius:0;padding-left:0}
-.editor-section{background:transparent;border:1px solid transparent;padding-right:56px;margin-left:24px;padding-left:12px;border-radius:0}
+.editor-section{background:#fff;border:1px solid rgba(16,24,40,0.04);padding:14px;margin-left:0;border-radius:8px;width:calc(100% + 36px);margin-left:-18px;margin-right:-18px}
 .editor-section h3{margin:0 0 6px 0;color:var(--text-strong)}
-.editor-section-title{display:block;text-align:center;font-size:12.5pt;font-weight:700;color:var(--text-strong);position:relative;margin-bottom:8px}
+.editor-section-title{display:block;text-align:left;font-size:12.5pt;font-weight:700;color:var(--text-strong);position:relative;margin-bottom:8px;white-space:normal;overflow:visible;max-width:100%}
+
+/* Editor shelf (header) styling - cleaner dropdown look */
+.editor-section-header{display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(248,250,252,0.95));border:1px solid rgba(16,24,40,0.04);box-shadow:0 6px 18px rgba(16,24,40,0.03);cursor:default}
+.editor-section-header .left-wrap{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.editor-section-header .editor-section-title{margin:0;padding:0 8px;font-weight:700;flex:1;text-align:center}
+.editor-section-header .shelf-toggle{width:36px;height:36px;border-radius:8px;border:1px solid var(--surface-2);background:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer}
+.editor-section-header .shelf-toggle:hover{background:var(--surface-1)}
+.editor-section-header .editor-controls{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.editor-section-header .editor-controls button{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px}
+.editor-section-header .shelf-toggle:hover{background:var(--surface-1)}
+.editor-section .editor-controls button{width:36px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px}
+
+/* collapsed shelf behavior remains the same but make header always visible and clickable */
+.editor-section.collapsed > *:not(.editor-section-header){display:none !important}
+
+/* hide legacy drag handles (dragging now handled in preview) */
+.drag-handle{display:none !important}
+
+/* collapsed shelf behavior for forms */
+.editor-section.collapsed > *:not(.editor-section-header){
+  display:none !important;
+}
+.shelf-toggle{padding:6px 8px;border-radius:6px;border:1px solid var(--surface-2);background:#fff;cursor:pointer}
 .editor-section-title::after{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:0;height:0.9px;width:30%;border-radius:1px;background:linear-gradient(90deg, rgba(17,24,39,0) 0%, rgba(17,24,39,0.9) 50%, rgba(17,24,39,0) 100%)}
 .editor-section > div > label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
 .editor-section input, .editor-section textarea{width:100%;margin-bottom:8px}
-.editor-controls{display:flex;gap:6px;align-items:center}
-.editor-controls button{padding:6px 8px;border:1px solid var(--surface-2);background:#fff;cursor:pointer}
+.editor-section .section-meta{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.editor-section .section-row{display:grid;grid-template-columns:1fr 96px;gap:8px;align-items:center}
+.editor-controls{display:flex;gap:6px;align-items:center;justify-content:flex-end}
+.editor-controls button{padding:6px 8px;border:1px solid var(--surface-2);background:#fff;cursor:pointer;border-radius:6px}
 .editor-controls button.ghost{background:transparent}
 
 .photo-preview{width:64px;height:64px;border:1px solid var(--surface-2);object-fit:cover;display:inline-block;margin-right:8px}
@@ -171,3 +230,26 @@ button:focus, input:focus, textarea:focus{outline:2px solid rgba(17,24,39,0.08)}
 
 /* preview layer visual: colored layer assigned per-section via inline style */
 .page .layer{background:transparent}
+
+/* remove button overlay inside each preview layer */
+.layer-remove{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:6px;border:1px solid rgba(16,24,40,0.06);background:#fff;color:rgba(16,24,40,0.7);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 12px rgba(16,24,40,0.06)}
+.layer-remove:hover{background:rgba(16,24,40,0.04)}
+
+/* drag visuals for preview layers */
+.layer[draggable="true"]{cursor:grab}
+.layer.dragging{opacity:0.55}
+.layer.drag-over{outline:3px dashed rgba(59,130,246,0.32);}
+
+/* responsive header adjustments */
+@media (max-width:880px){
+  .site-header{height:64px}
+  .site-header-inner{padding:8px 12px}
+  .header-right{right:12px;gap:8px}
+  .header-actions{flex-direction:row;align-items:center}
+  .primary-actions, .secondary-actions{flex-direction:row}
+}
+
+@media (max-width:520px){
+  .site-brand{font-size:16px}
+  .header-actions{display:none}
+}
