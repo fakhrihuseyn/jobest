@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jobest — Resume Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="panel-left">
+      <div class="editor-header">
+        <h1>Construction</h1>
+        <div style="font-size:12px;color:var(--muted)">Draft</div>
+      </div>
+
+      <div class="templates">
+        <div class="row">
+          <button id="add-header" aria-label="Add Header">Add Header</button>
+          <button id="add-experience" aria-label="Add Experience">Add Experience</button>
+        </div>
+        <div class="row">
+          <button id="add-skills" aria-label="Add Skills">Add Skills</button>
+          <button id="add-education" aria-label="Add Education">Add Education</button>
+        </div>
+        <div class="row">
+          <button id="add-hobbies" aria-label="Add Hobbies">Add Hobbies</button>
+          <button id="add-page" aria-label="Add Page">Add Page</button>
+        </div>
+      </div>
+
+      <div class="io">
+        <button id="export-json" aria-label="Export JSON"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zM12 3l4 4h-3v4h-2V7H8l4-4z"/></svg>Export</button>
+        <button id="import-json" aria-label="Import JSON"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9v10H5V9H3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9h-2zM11 11V3h2v8h3l-4 4-4-4h3z"/></svg>Import</button>
+        <button id="print" aria-label="Print / Export to PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8H5c-1.1 0-2 .9-2 2v6h4v4h10v-4h4v-6c0-1.1-.9-2-2-2zM8 18H6v-4h12v4h-2v2H8v-2zM17 3H7v4h10V3z"/></svg>Print</button>
+        <button id="export-pdf" aria-label="Save as PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM13 3v6h6l-6-6zM12 12l4 4h-3v4h-2v-4H8l4-4z"/></svg>Save PDF</button>
+        <button id="undo" aria-label="Undo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6 0 1.42-.47 2.73-1.26 3.78l1.46 1.46C20.14 17.14 21 15.14 21 13c0-4.97-4.03-9-9-9z"/></svg>Undo</button>
+        <button id="redo" aria-label="Redo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6 0 1.42.47 2.73 1.26 3.78L6.8 20.24C5.86 18.86 5 16.86 5 14c0-4.97 4.03-9 9-9z"/></svg>Redo</button>
+        <button id="remove-page-global" aria-label="Remove Last Page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Remove Page</button>
+      </div>
+
+      <div class="controls-extra">
+        <label for="zoom-slider">Preview Zoom <span id="zoom-value">100%</span></label>
+        <input id="zoom-slider" type="range" min="40" max="100" step="1" value="100" aria-label="Preview zoom" />
+      </div>
+
+      <!-- keyboard hint removed per user preference -->
+
+      <div class="forms" id="forms"></div>
+
+      <input id="file-input" type="file" accept="application/json" style="display:none">
+    </aside>
+
+    <main class="panel-right">
+      <div class="preview" id="preview">
+        <div id="preview-inner" class="preview-inner" aria-live="polite"></div>
+      </div>
+    </main>
+  </div>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+
+  <!-- PDF generation overlay -->
+  <div id="pdf-progress" class="pdf-progress" aria-hidden="true">
+    <div class="pdf-progress-inner" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="message">Generating PDF…</div>
+    </div>
+  </div>
+  <script type="module" src="scripts/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+.
+├── index.html                # Shell: left construction panel + right preview pages
+├── styles.css                # Global & print profile styles
+├── /scripts
+│   ├── app.js                # State mgmt, template switch, pagination, export
+│   ├── dataModel.js          # Schema + defaults + validation
+│   ├── aurora.js             # Aurora rendering & layers
+│   └── classic.js            # Classic rendering
+├── /components
+│   ├── PhotoUpload.js        # Left-side photo upload UI
+│   ├── CandidateForm.js      # Candidate details
+│   ├── ExperienceForm.js     # Company/Project editor, add/remove
+│   ├── CloudStacksForm.js    # Azure/AWS/GCP lists
+│   ├── SkillsForm.js         # Skills categories
+│   ├── EducationForm.js      # Education & certificates
+│   └── HobbiesForm.js        # Hobbies editor
+└── /assets
+    └── placeholders/

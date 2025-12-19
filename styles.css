@@ -1,0 +1,167 @@
+:root{
+  --bg:#FBFDFF;
+  --surface-1:#F3F6F9;
+  --surface-2:#E9EEF4;
+  --surface-3:#DDE6EE;
+  --text-strong:#111827;
+  --text-body:#374151;
+  --muted:#6B7280;
+  --shadow: 0 6px 18px rgba(16,24,40,0.04);
+  --gap:12px;
+  --font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--bg);color:var(--text-body);font-size:11pt;line-height:1.35}
+
+.app{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;height:100vh}
+.panel-left{background:#FFFFFF;border:1px solid rgba(16,24,40,0.04);padding:18px;overflow:auto;box-shadow:0 12px 30px rgba(16,24,40,0.04);display:flex;flex-direction:column}
+.panel-right{background:transparent;overflow:auto;padding:0}
+
+.editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.editor-header h1{font-size:18px;color:var(--text-strong);margin:0}
+.status-badge{font-size:12px;color:var(--muted);padding:6px 8px;border:1px solid var(--surface-2);background:#fff}
+
+.templates .row{display:flex;gap:10px;margin-bottom:12px}
+.templates button{flex:1;padding:12px;border:0;background:#ffffff;color:var(--text-strong);cursor:pointer;box-shadow:inset 0 -1px 0 rgba(16,24,40,0.02),0 10px 30px rgba(16,24,40,0.04);transition:transform .12s ease,box-shadow .12s ease}
+.templates button:hover{background:var(--surface-1);transform:translateY(-3px);box-shadow:0 14px 34px rgba(16,24,40,0.08)}
+.templates button:active{transform:translateY(0);box-shadow:0 8px 20px rgba(16,24,40,0.06)}
+
+.io{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.io button{flex:1 1 48%;padding:10px;border:0;background:#fff;color:var(--text-strong);cursor:pointer;box-shadow:0 8px 22px rgba(16,24,40,0.04);transition:transform .12s ease,box-shadow .12s ease}
+.io button:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(16,24,40,0.08)}
+.io button[aria-label="Remove Last Page"]{background:#fff6f6;color:#b91c1c}
+
+/* small click animation class applied by JS */
+.btn-click{animation:btn-pop .18s ease}
+@keyframes btn-pop{0%{transform:scale(1)}50%{transform:scale(.98)}100%{transform:scale(1)}}
+
+.forms{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.sr-only{position:relative}
+
+.preview{display:flex;flex-direction:column;gap:20px;align-items:center;padding:0}
+
+/* scaled inner wrapper — JS will apply a transform to this element to fit pages */
+.preview-inner{transform-origin:top left;display:flex;flex-direction:column;gap:20px;align-items:center}
+
+.icon{width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:8px;fill:currentColor}
+
+.page-break-marker{width:100%;max-width:297mm;display:flex;align-items:center;justify-content:center;padding:6px 0;margin:6px 0 12px;border-top:2px dashed rgba(17,24,39,0.12);position:relative}
+.page-break-marker button{background:var(--surface-1);border:1px dashed rgba(17,24,39,0.08);padding:6px 10px;border-radius:4px;cursor:pointer}
+.page-break-marker .label{font-size:11px;color:var(--muted);margin-left:8px}
+
+/* controls-extra (zoom slider) */
+.controls-extra{margin-top:12px;padding-top:8px;border-top:1px dashed rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px}
+.controls-extra label{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between}
+.controls-extra input[type="range"]{width:100%;appearance:none;height:6px;background:var(--surface-2);border-radius:6px;outline:none}
+.controls-extra input[type="range"]::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--text-strong);box-shadow:0 2px 6px rgba(16,24,40,0.12)}
+
+/* PDF progress overlay */
+.pdf-progress{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(4,6,12,0.35);display:flex;align-items:center;justify-content:center;z-index:1200;backdrop-filter:blur(2px);visibility:hidden;opacity:0;transition:opacity .12s ease,visibility .12s ease}
+.pdf-progress[aria-hidden="false"]{visibility:visible;opacity:1}
+.pdf-progress-inner{background:#fff;padding:16px 18px;border-radius:8px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 36px rgba(4,6,12,0.12)}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--surface-2);border-top-color:var(--text-strong);animation:spin .9s linear infinite}
+.pdf-progress .message{font-size:13px;color:var(--text-strong)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* panel left content layout */
+.panel-left .templates{margin-bottom:8px}
+.panel-left .io{margin-bottom:12px}
+.panel-left .forms{flex:1;overflow:auto;padding-right:6px}
+
+.page{width:297mm;height:210mm;padding:0;box-sizing:border-box;background:#FFFFFF;border:1px solid var(--surface-2);box-shadow:0 8px 20px rgba(16,24,40,0.04)}
+.page.landscape { width:297mm; height:210mm }
+.page.grid-helper{outline:1px dashed rgba(17,24,39,0.06)}
+
+.header{display:grid;grid-template-columns:44mm 1fr;gap:12px;align-items:center;border-bottom:1px solid var(--surface-1);padding-bottom:10px;margin-bottom:10px}
+.photo-box{width:44mm;height:44mm;background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.photo-box img{width:100%;height:100%;object-fit:cover}
+
+/* Layers: full-width sections with padding; background set inline per-section to alternate colors */
+.layer{width:100%;box-sizing:border-box;padding:12mm 12mm 12mm 12mm;background:transparent}
+.page .layer + .layer{border-top:0}
+
+/* bottom-only drop shadow for layers */
+.page .layer{position:relative;box-shadow:none;border-bottom:1px solid rgba(16,24,40,0.3);}
+
+/* stronger centered localized shadow under the bottom border to match screenshot */
+.page .layer:not(:last-child)::after{
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -3px;
+  width: 80%;
+  height: 10px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center top, rgba(16,24,40,0.28) 0%, rgba(16,24,40,0.16) 25%, rgba(16,24,40,0.06) 50%, rgba(16,24,40,0) 85%);
+  filter: blur(2px);
+  opacity: 0.95;
+}
+
+/* Make sure layers print nicely: restore page padding in print mode and reduce layer padding */
+@media print{
+  .page{padding:12mm}
+  .page .layer{padding:6mm}
+  .page .layer:not(:last-child)::after{background:none}
+}
+
+.candidate-name{font-weight:800;color:var(--text-strong);font-size:48pt;margin:0;line-height:0.95}
+.candidate-title{font-size:14pt;color:var(--muted);margin-top:6px}
+
+.section{background:transparent;border:1px solid var(--surface-1);padding:12px;margin-bottom:12px;box-shadow:none}
+.section-title{font-weight:700;color:var(--text-strong);border-bottom:1px solid var(--surface-2);padding-bottom:6px;margin-bottom:8px}
+.section-body{color:var(--text-body);font-size:11pt}
+.skill-chip{display:inline-block;background:var(--surface-2);color:var(--text-strong);padding:4px 8px;margin:4px 6px 0 0;border-radius:2px;font-size:10pt}
+
+/* Editor section */
+.editor-section{position:relative;padding-left:48px;border:1px solid transparent}
+.drag-handle{position:absolute;left:10px;top:8px;width:32px;height:32px;background:#fff;border:1px solid var(--surface-2);display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 2px 6px rgba(16,24,40,0.04)}
+.drag-controls{position:absolute;left:10px;top:46px;display:flex;flex-direction:column;gap:6px}
+.drag-controls button{width:32px;height:28px;background:#fff;border:1px solid var(--surface-2);cursor:pointer}
+
+.editor-section[draggable="true"]{cursor:move}
+.editor-section.dragging{opacity:0.5}
+.editor-section.drag-over{outline:2px dashed rgba(17,24,39,0.12)}
+
+/* Inputs */
+input, textarea, select{font-family:var(--font-family);border:1px solid var(--surface-2);padding:8px;background:#fff;color:var(--text-strong)}
+textarea{min-height:80px}
+button:focus, input:focus, textarea:focus{outline:2px solid rgba(17,24,39,0.08)}
+
+/* Form editor visual polish */
+.forms .page-editor{background:transparent;border-radius:0;padding-left:0}
+.editor-section{background:transparent;border:1px solid transparent;padding-right:56px;margin-left:24px;padding-left:12px;border-radius:0}
+.editor-section h3{margin:0 0 6px 0;color:var(--text-strong)}
+.editor-section > div > label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+.editor-section input, .editor-section textarea{width:100%;margin-bottom:8px}
+.editor-controls{display:flex;gap:6px;align-items:center}
+.editor-controls button{padding:6px 8px;border:1px solid var(--surface-2);background:#fff;cursor:pointer}
+.editor-controls button.ghost{background:transparent}
+
+.photo-preview{width:64px;height:64px;border:1px solid var(--surface-2);object-fit:cover;display:inline-block;margin-right:8px}
+
+/* Drag visual */
+.editor-section.drag-over{box-shadow:0 0 0 3px rgba(59,130,246,0.06);transform:translateY(-2px)}
+
+
+/* Print rules */
+@media print{
+  .panel-left{display:none !important}
+  .page{box-shadow:none;border:none}
+  @page{size:A4 landscape;margin:12mm}
+  .section, .header, .candidate-name{page-break-inside:avoid;page-break-after:avoid}
+  .sr-only{display:none}
+}
+
+/* Drag handle */
+.editor-section{position:relative;padding-left:56px;border:1px solid transparent}
+.drag-handle{position:absolute;right:12px;left:auto;top:12px;width:36px;height:36px;background:#fff;border:1px solid var(--surface-2);display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 6px 12px rgba(16,24,40,0.06)}
+.drag-handle:active{cursor:grabbing}
+.editor-section .drag-handle svg{width:14px;height:14px;fill:var(--muted)}
+
+/* ensure no table elements are used behind modules (reset any accidental table styling) */
+.forms, .forms *{display:block}
+
+/* preview layer visual: colored layer assigned per-section via inline style */
+.page .layer{background:transparent}
