@@ -84,26 +84,12 @@ html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--b
 /* bottom-only drop shadow for layers */
 .page .layer{position:relative;box-shadow:none;border-bottom:1px solid rgba(16,24,40,0.3);}
 
-/* stronger centered localized shadow under the bottom border to match screenshot */
-.page .layer:not(:last-child)::after{
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -3px;
-  width: 80%;
-  height: 10px;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center top, rgba(16,24,40,0.28) 0%, rgba(16,24,40,0.16) 25%, rgba(16,24,40,0.06) 50%, rgba(16,24,40,0) 85%);
-  filter: blur(2px);
-  opacity: 0.95;
-}
+/* no extra shadow pseudo-element — only keep the bottom border line */
 
 /* Make sure layers print nicely: restore page padding in print mode and reduce layer padding */
 @media print{
   .page{padding:12mm}
   .page .layer{padding:6mm}
-  .page .layer:not(:last-child)::after{background:none}
 }
 
 .candidate-name{font-weight:800;color:var(--text-strong);font-size:48pt;margin:0;line-height:0.95}
