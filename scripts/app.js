@@ -15,6 +15,7 @@ function wire(){
   els.addSkills()?.addEventListener('click', ()=>{ console.log('clicked add-skills'); addSection('skills'); });
   els.addEducation()?.addEventListener('click', ()=>{ console.log('clicked add-education'); addSection('education'); });
   els.addHobbies()?.addEventListener('click', ()=>{ console.log('clicked add-hobbies'); addSection('hobbies'); });
+  els.addObjectives()?.addEventListener('click', ()=>{ console.log('clicked add-objectives'); addSection('objectives'); });
   document.getElementById('add-page')?.addEventListener('click', ()=>{ addPage(); renderForms(); renderPreview(); });
   document.getElementById('export-json')?.addEventListener('click', exportJSON);
   document.getElementById('import-json')?.addEventListener('click', ()=> els.fileInput().click());
@@ -24,6 +25,22 @@ function wire(){
   document.getElementById('remove-page-global')?.addEventListener('click', ()=>{ removePage(state.pages.length-1); });
   document.getElementById('undo')?.addEventListener('click', ()=>{ undo(); renderForms(); renderPreview(); updateUndoRedoButtons(); });
   document.getElementById('redo')?.addEventListener('click', ()=>{ redo(); renderForms(); renderPreview(); updateUndoRedoButtons(); });
+
+  // Font selector wiring: persist choice and apply via CSS var
+  const fs = els.fontSelect?.();
+  if(fs){
+    // apply saved font
+    if(state.settings && state.settings.font) {
+      document.documentElement.style.setProperty('--font-family', state.settings.font);
+      try{ fs.value = state.settings.font }catch(e){}
+    }
+    fs.addEventListener('change', (e)=>{
+      if(!state.settings) state.settings = {};
+      state.settings.font = e.target.value;
+      save();
+      document.documentElement.style.setProperty('--font-family', e.target.value);
+    });
+  }
 }
 
 // init app

@@ -82,6 +82,15 @@ export function createSectionPreviewElement(section, pageIndex, sIndex){
     body.contentEditable = true; body.spellcheck = false;
     attachEditable(body, v=>{ section.data.text = v });
     sec.appendChild(body); wrapper.appendChild(sec);
+  } else if(section.type === 'objectives'){
+    const sec = document.createElement('div'); sec.className = 'section';
+    const t = document.createElement('div'); t.className = 'section-title'; t.textContent = 'Objective'; sec.appendChild(t);
+    const body = document.createElement('div'); body.className = 'section-body';
+    body.style.textAlign = 'center'; body.style.fontStyle = 'italic'; body.style.fontSize = '11.5pt';
+    body.textContent = section.data.text || '';
+    body.contentEditable = true; body.spellcheck = false;
+    attachEditable(body, v=>{ section.data.text = v });
+    sec.appendChild(body); wrapper.appendChild(sec);
   }
   return wrapper;
 }

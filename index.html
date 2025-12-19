@@ -28,6 +28,9 @@
         </div>
         <div class="row">
           <button id="add-hobbies" aria-label="Add Hobbies">Add Hobbies</button>
+          <button id="add-objectives" aria-label="Add Objectives">Add Objectives</button>
+        </div>
+        <div class="row">
           <button id="add-page" aria-label="Add Page">Add Page</button>
         </div>
       </div>
@@ -45,6 +48,14 @@
       <div class="controls-extra">
         <label for="zoom-slider">Preview Zoom <span id="zoom-value">100%</span></label>
         <input id="zoom-slider" type="range" min="40" max="100" step="1" value="100" aria-label="Preview zoom" />
+        <label for="font-select">Font Family</label>
+        <select id="font-select" aria-label="Select font family">
+          <option value="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial">Inter (default)</option>
+          <option value="Calibri, Candara, 'Segoe UI', Arial, sans-serif">Calibri</option>
+          <option value="'Calibri Light', Calibri, Candara, 'Segoe UI', Arial, sans-serif">Calibri Light</option>
+          <option value="Arial, Helvetica, sans-serif">Arial</option>
+          <option value="Times New Roman, Times, serif">Times New Roman</option>
+        </select>
       </div>
 
       <!-- keyboard hint removed per user preference -->

@@ -82,21 +82,39 @@ html,body{height:100%;margin:0;font-family:var(--font-family);background:var(--b
 .page .layer + .layer{border-top:0}
 
 /* bottom-only drop shadow for layers */
-.page .layer{position:relative;box-shadow:none;border-bottom:1px solid rgba(16,24,40,0.3);}
+.page .layer{position:relative;box-shadow:none;border-bottom:0.8px solid rgba(16,24,40,0.22);overflow:visible}
 
-/* no extra shadow pseudo-element — only keep the bottom border line */
+/* visible gradient shadow below the bottom border (subtle, centered across page) */
+.page .layer:not(:last-child)::after{
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%; /* place below the layer */
+  height: 5px;
+  pointer-events: none;
+  z-index: 2;
+  /* softened centered radial shadow: slightly reduced strength and blur */
+  background-image: radial-gradient(ellipse at center top, rgba(16,24,40,0.22) 0%, rgba(16,24,40,0.14) 30%, rgba(16,24,40,0.06) 55%, rgba(16,24,40,0) 100%);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 60% 100%;
+  filter: blur(1.6px);
+}
 
 /* Make sure layers print nicely: restore page padding in print mode and reduce layer padding */
 @media print{
   .page{padding:12mm}
   .page .layer{padding:6mm}
+  .page .layer:not(:last-child)::after{background:none}
 }
 
 .candidate-name{font-weight:800;color:var(--text-strong);font-size:48pt;margin:0;line-height:0.95}
 .candidate-title{font-size:14pt;color:var(--muted);margin-top:6px}
 
-.section{background:transparent;border:1px solid var(--surface-1);padding:12px;margin-bottom:12px;box-shadow:none}
-.section-title{font-weight:700;color:var(--text-strong);border-bottom:1px solid var(--surface-2);padding-bottom:6px;margin-bottom:8px}
+.section{background:transparent;border:0;padding:12px 0;margin-bottom:12px;box-shadow:none}
+.section-title{font-weight:700;color:var(--text-strong);border-bottom:0;padding-bottom:8px;margin-bottom:8px;text-align:center;font-size:13pt;position:relative}
+.section-title::after{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:0;height:1px;width:36%;border-radius:1px;background:linear-gradient(90deg, rgba(17,24,39,0) 0%, rgba(17,24,39,0.85) 50%, rgba(17,24,39,0) 100%)}
 .section-body{color:var(--text-body);font-size:11pt}
 .skill-chip{display:inline-block;background:var(--surface-2);color:var(--text-strong);padding:4px 8px;margin:4px 6px 0 0;border-radius:2px;font-size:10pt}
 
@@ -119,6 +137,8 @@ button:focus, input:focus, textarea:focus{outline:2px solid rgba(17,24,39,0.08)}
 .forms .page-editor{background:transparent;border-radius:0;padding-left:0}
 .editor-section{background:transparent;border:1px solid transparent;padding-right:56px;margin-left:24px;padding-left:12px;border-radius:0}
 .editor-section h3{margin:0 0 6px 0;color:var(--text-strong)}
+.editor-section-title{display:block;text-align:center;font-size:12.5pt;font-weight:700;color:var(--text-strong);position:relative;margin-bottom:8px}
+.editor-section-title::after{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:0;height:0.9px;width:30%;border-radius:1px;background:linear-gradient(90deg, rgba(17,24,39,0) 0%, rgba(17,24,39,0.9) 50%, rgba(17,24,39,0) 100%)}
 .editor-section > div > label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
 .editor-section input, .editor-section textarea{width:100%;margin-bottom:8px}
 .editor-controls{display:flex;gap:6px;align-items:center}

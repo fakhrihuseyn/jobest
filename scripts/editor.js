@@ -1,6 +1,6 @@
 import { state, save } from './state.js';
 import { els, inputField, textareaField } from './ui.js';
-import { renderPreview, assignLayerColor } from './preview.js';
+import { renderPreview, assignLayerColor, balancePages } from './preview.js';
 import { pushHistory as ph } from './state.js';
 
 export function addSection(type){
@@ -12,11 +12,31 @@ export function addSection(type){
   if(type==='experience') sec.data.items = [{company:'Company',role:'Role',from:'',to:'',summary:''}];
   if(type==='education') sec.data.items = [{school:'School',degree:'Degree',year:''}];
   if(type==='header') sec.data = { name:'Your Name', title:'Your Title', email:'you@example.com', photo: null };
+  if(type==='objectives') sec.data = { text: 'A short objective or summary statement' };
   if(type==='hobbies') sec.data = { text: 'Hobbies...' };
   // assign a layer color for the preview layer
   assignLayerColor(sec);
+  // append to the last page, then rebalance pages and navigate to the page containing the new section
   page.sections.push(sec);
-  save(); renderPreview();
+  save();
+  renderPreview();
+  // ensure pages are balanced (move overflow sections to next pages)
+  balancePages();
+  save();
+  // re-render forms and preview after balancing
+  renderForms();
+  renderPreview();
+  // find where the new section landed and scroll preview to that page
+  let foundPage = -1;
+  for(let i=0;i<state.pages.length;i++){
+    if(state.pages[i].sections.findIndex(s=>s.id===sec.id) !== -1){ foundPage = i; break }
+  }
+  if(foundPage !== -1){
+    requestAnimationFrame(()=>{
+      const inner = document.getElementById('preview-inner'); if(!inner) return;
+      const pages = inner.querySelectorAll('.page'); if(pages[foundPage]) pages[foundPage].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
 }
 
 export function addPage(){ ph(); state.pages.push({ sections: [] }); save(); renderPreview(); }
@@ -47,7 +67,7 @@ export function renderForms(){
       s.appendChild(handle);
 
       const h = document.createElement('div'); h.style.display='flex'; h.style.justifyContent='space-between'; h.style.alignItems='center';
-      const label = document.createElement('div'); label.textContent = `${section.type.toUpperCase()} (${sIndex+1})`; label.style.fontWeight='600'; h.appendChild(label);
+      const label = document.createElement('div'); label.className = 'editor-section-title'; label.textContent = `${section.type.toUpperCase()} (${sIndex+1})`; h.appendChild(label);
       const controls = document.createElement('div'); controls.className='editor-controls';
 
       const up = document.createElement('button'); up.textContent='↑'; up.title='Move up'; up.onclick = ()=>{ moveSection(pIndex, sIndex, -1) };
@@ -69,7 +89,7 @@ export function renderForms(){
       } else if(section.type === 'experience'){
         section.data.items = section.data.items || [];
         section.data.items.forEach((it,i)=>{
-          const wrap = document.createElement('div'); wrap.style.borderTop='1px dashed var(--surface-2)'; wrap.style.paddingTop='8px';
+          const wrap = document.createElement('div'); wrap.style.paddingTop='8px';
           wrap.appendChild(inputField('Company', it.company, v=>{ it.company=v; save(); renderPreview() }));
           wrap.appendChild(inputField('Role', it.role, v=>{ it.role=v; save(); renderPreview() }));
           wrap.appendChild(inputField('From', it.from, v=>{ it.from=v; save(); renderPreview() }));
@@ -94,6 +114,10 @@ export function renderForms(){
         s.appendChild(addEd);
       } else if(section.type === 'hobbies'){
         s.appendChild(textareaField('Hobbies', section.data.text || '', v=>{ section.data.text=v; save(); renderPreview() }));
+      }
+
+      else if(section.type === 'objectives'){
+        s.appendChild(textareaField('Objective', section.data.text || '', v=>{ section.data.text = v; save(); renderPreview(); }));
       }
 
       pageWrap.appendChild(s);

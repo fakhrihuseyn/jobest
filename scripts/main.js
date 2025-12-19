@@ -93,7 +93,7 @@ function renderForms(){
         s.addEventListener('drop', (e)=>{ e.preventDefault(); s.classList.remove('drag-over'); try{ const payload = JSON.parse(e.dataTransfer.getData('text/plain')); const targetS = Array.from(s.parentElement.querySelectorAll('.editor-section')).indexOf(s); pushHistory(); moveSectionBetweenPages(payload.fromP, payload.fromS, pIndex, targetS); }catch(_){ } });
 
         const h = document.createElement('div'); h.style.display='flex'; h.style.justifyContent='space-between'; h.style.alignItems='center';
-        const label = document.createElement('div'); label.textContent = `${section.type.toUpperCase()} (${sIndex+1})`; label.style.fontWeight='600'; h.appendChild(label);
+        const label = document.createElement('div'); label.className='editor-section-title'; label.textContent = `${section.type.toUpperCase()} (${sIndex+1})`; h.appendChild(label);
         const controls = document.createElement('div'); controls.className='editor-controls';
         const up = document.createElement('button'); up.textContent='↑'; up.title='Move up'; up.onclick = ()=>{ moveSection(pIndex, sIndex, -1) };
         const down = document.createElement('button'); down.textContent='↓'; down.title='Move down'; down.onclick = ()=>{ moveSection(pIndex, sIndex, 1) };
@@ -115,7 +115,7 @@ function renderForms(){
         } else if(section.type === 'experience'){
           section.data.items = section.data.items || [ { company:'Company', role:'Role', from:'2020', to:'2022', summary:'Achievements...' } ];
           section.data.items.forEach((it, i)=>{
-            const wrap = document.createElement('div'); wrap.style.borderTop='1px dashed var(--surface-2)'; wrap.style.paddingTop='8px';
+            const wrap = document.createElement('div'); wrap.style.paddingTop='8px';
             wrap.appendChild(inputField('Company', it.company, v=>{ it.company=v; save(); renderPreview() }));
             wrap.appendChild(inputField('Role', it.role, v=>{ it.role=v; save(); renderPreview() }));
             wrap.appendChild(inputField('From', it.from, v=>{ it.from=v; save(); renderPreview() }));
@@ -142,7 +142,10 @@ function renderForms(){
         } else if(section.type === 'hobbies'){
           section.data.text = section.data.text || 'Hobbies and interests...';
           s.appendChild(textareaField('Hobbies', section.data.text, v=>{ section.data.text=v; save(); renderPreview() }));
-        }
+          } else if(section.type === 'objectives'){
+            section.data.text = section.data.text || 'A short objective or summary statement';
+            s.appendChild(textareaField('Objective', section.data.text, v=>{ section.data.text=v; save(); renderPreview() }));
+          }
 
         pageWrap.appendChild(s);
       })
@@ -263,6 +266,12 @@ function createSectionPreviewElement(section){
     const sec = document.createElement('div'); sec.className='section';
     const t = document.createElement('div'); t.className='section-title'; t.textContent='Hobbies'; sec.appendChild(t);
     const body = document.createElement('div'); body.className='section-body'; body.textContent = section.data.text || '';
+    sec.appendChild(body); wrapper.appendChild(sec);
+  } else if(section.type === 'objectives'){
+    const sec = document.createElement('div'); sec.className='section';
+    const body = document.createElement('div'); body.className='section-body';
+    body.style.textAlign = 'center'; body.style.fontStyle = 'italic'; body.style.fontSize = '11.5pt';
+    body.textContent = section.data.text || '';
     sec.appendChild(body); wrapper.appendChild(sec);
   }
   return wrapper;
